@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Circle Calculator</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+:root{
+  --blue:#2563eb;
+  --bg:#f4f6fb;
+  --card:#ffffff;
+  --text:#111827;
+  --muted:#6b7280;
+  --radius:14px;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:system-ui,-apple-system,Segoe UI,Roboto;
+  background:var(--bg);
+  color:var(--text);
+}
+.container{
+  max-width:900px;
+  margin:auto;
+  padding:16px;
+}
+.card{
+  background:var(--card);
+  border-radius:var(--radius);
+  box-shadow:0 12px 30px rgba(0,0,0,.08);
+  padding:18px;
+  margin-bottom:16px;
+}
+h1{
+  margin:0;
+  color:var(--blue);
+}
+.subtitle{
+  margin-top:6px;
+  color:var(--muted);
+}
+label{
+  font-weight:600;
+  font-size:14px;
+}
+input{
+  width:100%;
+  padding:12px;
+  margin-top:6px;
+  margin-bottom:14px;
+  border-radius:10px;
+  border:1px solid #d1d5db;
+  font-size:15px;
+}
+button{
+  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:12px;
+  background:var(--blue);
+  color:white;
+  font-weight:700;
+  cursor:pointer;
+}
+button.secondary{
+  background:#eef2ff;
+  color:#111;
+  margin-top:10px;
+}
+.grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+}
+@media(max-width:800px){
+  .grid{grid-template-columns:1fr}
+}
+.result-box{
+  background:#f9fafb;
+  border-radius:10px;
+  padding:14px;
+}
+.badge{
+  display:inline-block;
+  padding:4px 10px;
+  background:#e0e7ff;
+  color:#1e3a8a;
+  border-radius:999px;
+  font-size:12px;
+  margin-bottom:6px;
+}
+.error{
+  color:#dc2626;
+  font-weight:600;
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<!-- INPUT -->
+<div class="card">
+<h1>Circle Calculator</h1>
+<p class="subtitle">Calculate radius, diameter, circumference & area</p>
+
+<label>Radius (r)</label>
+<input id="radius" type="number" step="any" placeholder="Enter radius">
+
+<label>Diameter (d)</label>
+<input id="diameter" type="number" step="any" placeholder="Enter diameter">
+
+<label>Circumference (C)</label>
+<input id="circumference" type="number" step="any" placeholder="Enter circumference">
+
+<label>Area (A)</label>
+<input id="area" type="number" step="any" placeholder="Enter area">
+
+<button onclick="calculate()">Calculate Circle</button>
+<button class="secondary" onclick="resetAll()">Reset</button>
+</div>
+
+<!-- OUTPUT -->
+<div class="grid">
+<div class="card">
+<h3>Results</h3>
+<div id="result" class="result-box"></div>
+</div>
+
+<div class="card">
+<h3>Details</h3>
+<div class="result-box">
+π (Pi) = 3.141592653589793<br>
+Formulas used:
+<ul>
+<li>d = 2r</li>
+<li>C = 2πr</li>
+<li>A = πr²</li>
+</ul>
+</div>
+</div>
+</div>
+
+</div>
+
+<script>
+function calculate(){
+  const pi = Math.PI;
+
+  let r = parseFloat(radius.value);
+  let d = parseFloat(diameter.value);
+  let c = parseFloat(circumference.value);
+  let a = parseFloat(area.value);
+
+  let count = [r,d,c,a].filter(v=>!isNaN(v)).length;
+  let resultBox = document.getElementById("result");
+  resultBox.innerHTML="";
+
+  if(count !== 1){
+    resultBox.innerHTML = `<span class="error">Enter exactly ONE value to calculate the rest.</span>`;
+    return;
+  }
+
+  if(r <= 0 || d <= 0 || c <= 0 || a <= 0){
+    resultBox.innerHTML = `<span class="error">Values must be greater than zero.</span>`;
+    return;
+  }
+
+  if(!isNaN(r)){
+    d = 2*r;
+    c = 2*pi*r;
+    a = pi*r*r;
+  }
+  else if(!isNaN(d)){
+    r = d/2;
+    c = 2*pi*r;
+    a = pi*r*r;
+  }
+  else if(!isNaN(c)){
+    r = c/(2*pi);
+    d = 2*r;
+    a = pi*r*r;
+  }
+  else if(!isNaN(a)){
+    r = Math.sqrt(a/pi);
+    d = 2*r;
+    c = 2*pi*r;
+  }
+
+  resultBox.innerHTML = `
+    <span class="badge">Solved Circle</span><br><br>
+    Radius (r): <strong>${r.toFixed(6)}</strong><br>
+    Diameter (d): <strong>${d.toFixed(6)}</strong><br>
+    Circumference (C): <strong>${c.toFixed(6)}</strong><br>
+    Area (A): <strong>${a.toFixed(6)}</strong>
+  `;
+}
+
+function resetAll(){
+  radius.value="";
+  diameter.value="";
+  circumference.value="";
+  area.value="";
+  document.getElementById("result").innerHTML="";
+}
+</script>
+
+</body>
+</html>
